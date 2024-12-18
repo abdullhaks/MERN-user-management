@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link , useNavigate } from "react-router-dom"
 
 
 function SignUp() {
@@ -7,6 +7,8 @@ function SignUp() {
   const [formData,setFormData] = useState({});
   const [loading,setLoading] = useState(false);
   const [error,setError] = useState(false);
+  const navigate = useNavigate()
+
   const handleChange = (e: { target: { id: any; value: any } })=>{
     setFormData({...formData,[e.target.id]:e.target.value})
   };
@@ -33,7 +35,8 @@ function SignUp() {
       setLoading(false);
       if(data.success===false){
       setError(true);
-
+      }else{
+      navigate('/sign-in');
       }
 
     }catch(error){

@@ -1,11 +1,12 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link , useNavigate} from "react-router-dom";
 
 function SignIn() {
 
   const [formData,setFormData] = useState({});
   const [loading,setLoading] = useState(false);
   const [error,setError] = useState(false);
+  const navigate = useNavigate()
 
   const handleChange = (e: { target: { id: any; value: any } })=>{
     setFormData({...formData,[e.target.id]:e.target.value})
@@ -14,6 +15,7 @@ function SignIn() {
   const handleSubmit = async(e: { preventDefault: () => void; })=>{
     e.preventDefault();
     
+    console.log('form data from sign in page.......',formData);
 
     try{
       setError(false);
@@ -28,13 +30,15 @@ function SignIn() {
         body: JSON.stringify(formData)
       });
       const data =await res.json();
-      console.log("data is",data); {message:'User created successfuly'};
+      console.log("data is",data); {message:'Sign in successfuly'};
 
       setLoading(false);
       if(data.success===false){
       setError(true);
-
-      }
+      }else{
+        navigate('/');
+      };
+     
 
     }catch(error){
       console.log("error is ",error);
@@ -63,7 +67,7 @@ function SignIn() {
       
 
       <div className="flex gap-2 mt-4">
-        <p>Haven't an account ?</p>
+        <p>Create an account ?</p>
         <Link to={'/sign-up'}>
         <span className="text-blue-500">Sign In</span>
         </Link>

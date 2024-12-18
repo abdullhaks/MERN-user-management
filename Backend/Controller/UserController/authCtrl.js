@@ -38,7 +38,7 @@ export const signin = async(req,res,next)=>{
         const expDate = new Date(Date.now()+3600000);
 
 
-        res.cookie ('access_token',token , {httpOnly:true , expires:expDate}).status(200).json(rest);
+        res.cookie ('access_token',token, {httpOnly:true , expires:expDate}).status(200).json(rest);
 
     }catch(error){
         next(error);
