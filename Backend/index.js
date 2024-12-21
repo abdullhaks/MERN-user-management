@@ -23,7 +23,7 @@ app.listen (3000, ()=>{
     console.log('server is running on port NO 3000');
 });
 
-app.use('/api/user',userRouter);
+app.use('/api/profile',userRouter);
 app.use('/api/auth',authRouter);
 
 
