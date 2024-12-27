@@ -1,10 +1,11 @@
 import express from 'express';
 import {updateProfile} from '../../Controller/UserController/profileCtrl.js'
+import { verifyToken } from '../../Utils/verifyuser.js';
 
 const router = express.Router();
 
 
-router.put("/update",updateProfile); // Assuming `verifyToken` middleware validates the JWT
+router.put("/update",verifyToken,updateProfile); 
 
 
 

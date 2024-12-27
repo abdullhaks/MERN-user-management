@@ -1,34 +1,37 @@
 import User from "../../Models/UserModels/userModel.js";
+import bcryptjs from "bcryptjs";
 
 export const updateProfile = async (req, res, next) => {
   try {
-    const { userName, email, profilePicture } = req.body;
+    const { userName, email, profilePicture, password, _id } = req.body;
 
-    console.log('user credential from backend is..',userName, email, profilePicture);
+    console.log("User credentials from backend are:", userName, email, profilePicture);
 
-    if(profilePicture){
-      var updatedUser = await User.updateOne(
-        { email: email }, 
-        { $set: { userName, email, profilePicture } } 
-      );
-    }else{
-      var updatedUser = await User.updateOne(
-        { email: email }, 
-        { $set: { userName, email } } 
-      );
+    const updatedFields = { userName, email };
+
+    // Check dp
+    if (profilePicture) {
+      updatedFields.profilePicture = profilePicture;
     }
-  
-    if (updatedUser.modifiedCount === 0) {
+
+    if (password) {
+      const hashedPassword = bcryptjs.hashSync(password, 10);
+      updatedFields.password = hashedPassword; 
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(_id, updatedFields, {
+      new: true, 
+    });
+
+    if (!updatedUser) {
       return res.status(404).json({ message: "User not found or no changes made." });
     }
 
-    const validUser = await User.findOne({email});
-
-    const {password : hashedPassword , ...rest} = validUser._doc;
-    res.status(200).json(rest);
-
+    const { password: hashedPassword, ...rest } = updatedUser._doc;
+    res.status(200).json(rest); 
   } catch (error) {
-    next(error);
+    next(error); 
+    console.error(error); 
   }
 };
 

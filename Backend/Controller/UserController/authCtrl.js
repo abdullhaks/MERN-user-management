@@ -29,8 +29,14 @@ export const signin = async(req,res,next)=>{
 
         const validUser = await User.findOne({email});
         console.log('valid user is ',validUser);
+
         
         if(!validUser) return next(errorHandler(404,'User not found!'));
+
+        if (validUser.isBlocked) {
+            return next(errorHandler(403, 'Your account is blocked!'));
+          }
+          
         const validPass = bcryptjs.compareSync(password,validUser.password);
         if(!validPass) return next(errorHandler(401,'Wrong credentials..!'));
         const token = jwt.sign({id:validUser._id},process.env.JWT_SECRET);
@@ -96,3 +102,35 @@ export const google = async(req,res,next) => {
         next(error);
     }
 }
+
+
+export const signOut = async (req, res, next) => {
+    try {
+      // here we clear auth cookie......
+      res
+        .clearCookie("access_token", { httpOnly: true })
+        .status(200)
+        .json({ message: "Signed out successfully." });
+    } catch (error) {
+      next(error);
+    }
+  };
+  
+ 
+  export const deleteAccount = async (req, res, next) => {
+    try {
+      const { userId } = req.body;
+  
+      const user = await User.findById(userId);
+      if (!user) return next(errorHandler(404, "User not found."));
+  
+      await User.findByIdAndDelete(userId);
+  
+      res
+        .clearCookie("access_token", { httpOnly: true })
+        .status(200)
+        .json({ message: "Account deleted successfully." });
+    } catch (error) {
+      next(error);
+    }
+  };
